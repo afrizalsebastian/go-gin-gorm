@@ -39,3 +39,28 @@ func CreateUser(c *gin.Context) {
 		"data":   userResponse,
 	})
 }
+
+func Login(c *gin.Context) {
+	var request dtos.LoginRequest
+
+	if err := c.ShouldBindBodyWithJSON(&request); err != nil {
+		err := &middleware.CustomError{
+			StatusCode: 400,
+			Message:    "Validation Error",
+		}
+		c.Error(err)
+		return
+	}
+
+	token, err := services.Login(&request)
+	if err != nil {
+		c.Error(err)
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status": true,
+		"data": gin.H{
+			"token": token,
+		},
+	})
+}

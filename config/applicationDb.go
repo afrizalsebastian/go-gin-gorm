@@ -2,11 +2,9 @@ package config
 
 import (
 	"fmt"
-	"log"
 	"os"
 
 	"github.com/afrizalsebastian/go-gin-gorm/models"
-	"github.com/joho/godotenv"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -14,12 +12,6 @@ import (
 var DB *gorm.DB
 
 func ConnectDatabase() {
-	err := godotenv.Load(".env")
-	if err != nil {
-		log.Fatal("Error loading .env file:", err)
-		panic(err)
-	}
-
 	db_user := os.Getenv("USER_DB")
 	db_password := os.Getenv("PASSWORD_DB")
 	db_url := os.Getenv("BASE_DB")
