@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"net/http"
 	"os"
 	"time"
 
@@ -9,13 +10,22 @@ import (
 )
 
 type JwtClaims struct {
-	ID       int `json:"id"`
-	Username int `json:"username"`
-	Email    int `json:"email"`
-	Role     int `json:"role"`
+	ID       int    `json:"id"`
+	Username string `json:"username"`
+	Email    string `json:"email"`
+	Role     string `json:"role"`
 }
 
 var JWT_SECRET = []byte(os.Getenv("JWT_KEY"))
+
+type InvalidToken struct {
+	StatusCode int
+	Message    string
+}
+
+func (e *InvalidToken) Error() string {
+	return e.Message
+}
 
 func CreateToken(user *models.User) (string, error) {
 	claims := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
@@ -33,4 +43,23 @@ func CreateToken(user *models.User) (string, error) {
 	}
 
 	return token, nil
+}
+
+func VerifyToken(tokenString string) (*jwt.Token, error) {
+	claims, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		return JWT_SECRET, nil
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	if !claims.Valid {
+		return nil, &InvalidToken{
+			Message:    "Invalid Token",
+			StatusCode: http.StatusUnauthorized,
+		}
+	}
+
+	return claims, nil
 }

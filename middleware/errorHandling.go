@@ -3,6 +3,7 @@ package middleware
 import (
 	"net/http"
 
+	"github.com/afrizalsebastian/go-gin-gorm/utils"
 	"github.com/gin-gonic/gin"
 )
 
@@ -33,6 +34,11 @@ func ErrorHandling() gin.HandlerFunc {
 				ctx.JSON(customError.StatusCode, gin.H{
 					"status": false,
 					"error":  customError.Message,
+				})
+			} else if invalidToken, ok := err.(*utils.InvalidToken); ok {
+				ctx.JSON(invalidToken.StatusCode, gin.H{
+					"status": false,
+					"error":  invalidToken.Message,
 				})
 			} else {
 				ctx.JSON(http.StatusInternalServerError, gin.H{
