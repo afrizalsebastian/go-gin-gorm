@@ -1,13 +1,15 @@
 package main
 
 import (
+	"github.com/afrizalsebastian/go-gin-gorm/config"
 	"github.com/afrizalsebastian/go-gin-gorm/routes"
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	r := gin.Default()
+	config.ConnectDatabase()
 
+	r := gin.Default()
 	api := r.Group("/api")
 	{
 		routes.SetupExampleRoutes(api)
