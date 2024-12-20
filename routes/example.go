@@ -9,5 +9,6 @@ func SetupExampleRoutes(router *gin.RouterGroup) {
 	exampleGroup := router.Group("/example")
 	{
 		exampleGroup.GET("/", controllers.GetExample)
+		exampleGroup.GET("/error", controllers.GetExampleError)
 	}
 }
