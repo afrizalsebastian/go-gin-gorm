@@ -21,12 +21,21 @@ func CreateUser(c *gin.Context) {
 		return
 	}
 
-	user := services.CreateUser(request)
+	user, err := services.CreateUser(&request)
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
+	userResponse := dtos.UserResponse{
+		Username: user.Username,
+		ID:       int(user.ID),
+		Email:    user.Email,
+		Role:     string(user.Role),
+	}
 
 	c.JSON(http.StatusCreated, gin.H{
 		"status": true,
-		"data": gin.H{
-			"username": user.Username,
-		},
+		"data":   userResponse,
 	})
 }

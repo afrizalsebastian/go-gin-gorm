@@ -15,6 +15,13 @@ func (e *CustomError) Error() string {
 	return e.Message
 }
 
+func NewCustomError(statusCode int, message string) *CustomError {
+	return &CustomError{
+		StatusCode: statusCode,
+		Message:    message,
+	}
+}
+
 func ErrorHandling() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		ctx.Next()
