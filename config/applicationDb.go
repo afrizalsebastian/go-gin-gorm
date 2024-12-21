@@ -26,6 +26,7 @@ func ConnectDatabase() {
 		panic(err)
 	}
 
+	db.AutoMigrate(&models.Profile{})
 	db.AutoMigrate(&models.User{})
 	DB = db
 }

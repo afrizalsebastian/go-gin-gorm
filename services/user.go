@@ -11,7 +11,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func CreateUser(createUserRequest *dtos.CreateUserRequest) (*models.User, error) {
+func CreateUser(createUserRequest *dtos.CreateUserRequest) (*map[string]interface{}, error) {
 	//Check email
 	existEmail, err := repositories.GetUserByEmail(createUserRequest.Email)
 	if err != nil {
@@ -41,8 +41,31 @@ func CreateUser(createUserRequest *dtos.CreateUserRequest) (*models.User, error)
 		Password: string(hashedPassword),
 		Email:    createUserRequest.Email,
 	}
+	err = repositories.CreateUser(user)
+	if err != nil {
+		return nil, err
+	}
 
-	return repositories.CreateUser(user)
+	profile := &models.Profile{
+		UserId:   user.ID,
+		Fullname: createUserRequest.Fullname,
+		Bio:      createUserRequest.Bio,
+	}
+	err = repositories.CreateProfile(profile)
+	if err != nil {
+		return nil, err
+	}
+
+	result := &map[string]interface{}{
+		"id":       user.ID,
+		"username": user.Username,
+		"email":    user.Email,
+		"role":     user.Role,
+		"fullname": profile.Fullname,
+		"bio":      profile.Bio,
+	}
+
+	return result, nil
 }
 
 func Login(loginRequest *dtos.LoginRequest) (string, error) {

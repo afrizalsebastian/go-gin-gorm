@@ -6,14 +6,14 @@ import (
 	"gorm.io/gorm"
 )
 
-func CreateUser(user *models.User) (*models.User, error) {
+func CreateUser(user *models.User) error {
 	result := config.DB.Create(user)
 
 	if result.Error != nil {
-		return nil, result.Error
+		return result.Error
 	}
 
-	return user, nil
+	return nil
 }
 
 func GetUserByEmail(email string) (*models.User, error) {

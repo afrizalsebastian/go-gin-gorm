@@ -5,6 +5,7 @@ import (
 
 	"github.com/afrizalsebastian/go-gin-gorm/dtos"
 	"github.com/afrizalsebastian/go-gin-gorm/middleware"
+	"github.com/afrizalsebastian/go-gin-gorm/models"
 	"github.com/afrizalsebastian/go-gin-gorm/services"
 	"github.com/gin-gonic/gin"
 )
@@ -27,11 +28,13 @@ func CreateUser(c *gin.Context) {
 		return
 	}
 
-	userResponse := dtos.UserResponse{
-		Username: user.Username,
-		ID:       int(user.ID),
-		Email:    user.Email,
-		Role:     string(user.Role),
+	userResponse := map[string]interface{}{
+		"username": (*user)["username"].(string),
+		"id":       (*user)["id"].(uint),
+		"email":    (*user)["email"].(string),
+		"role":     ((*user)["role"].(models.Role)),
+		"fullname": (*user)["fullname"].(string),
+		"bio":      (*user)["bio"].(string),
 	}
 
 	c.JSON(http.StatusCreated, gin.H{
