@@ -16,6 +16,20 @@ func CreateUser(user *models.User) error {
 	return nil
 }
 
+func GetUserById(id int) (*models.User, error) {
+	var user models.User
+	result := config.DB.First(&user, id)
+
+	if result.Error != nil {
+		if result.Error == gorm.ErrRecordNotFound {
+			return nil, nil
+		}
+		return nil, result.Error
+	}
+
+	return &user, nil
+}
+
 func GetUserByEmail(email string) (*models.User, error) {
 	var user models.User
 	result := config.DB.Where("email = ?", email).First(&user)
@@ -29,7 +43,7 @@ func GetUserByEmail(email string) (*models.User, error) {
 	return &user, nil
 }
 
-func GetUserByUsernae(username string) (*models.User, error) {
+func GetUserByUsername(username string) (*models.User, error) {
 	var user models.User
 	result := config.DB.Where("username = ?", username).First(&user)
 
@@ -37,6 +51,16 @@ func GetUserByUsernae(username string) (*models.User, error) {
 		if result.Error == gorm.ErrRecordNotFound {
 			return nil, nil
 		}
+		return nil, result.Error
+	}
+	return &user, nil
+}
+
+func DeleteUserById(id int) (*models.User, error) {
+	var user models.User
+	result := config.DB.Delete(&user, id)
+
+	if result.Error != nil {
 		return nil, result.Error
 	}
 	return &user, nil

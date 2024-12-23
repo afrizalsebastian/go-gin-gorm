@@ -1,4 +1,4 @@
-package services
+package user_services
 
 import (
 	"net/http"
@@ -11,7 +11,25 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func CreateUser(createUserRequest *dtos.CreateUserRequest) (*map[string]interface{}, error) {
+func toUserResponse(user *models.User, profile *models.Profile) *dtos.UserResponse {
+	var fullname string
+	var bio string
+	if profile != nil {
+		fullname = profile.Fullname
+		bio = profile.Bio
+	}
+
+	return &dtos.UserResponse{
+		ID:       int(user.ID),
+		Email:    user.Email,
+		Username: user.Username,
+		Role:     string(user.Role),
+		Fullname: &fullname,
+		Bio:      &bio,
+	}
+}
+
+func CreateUser(createUserRequest *dtos.CreateUserRequest) (*dtos.UserResponse, error) {
 	//Check email
 	existEmail, err := repositories.GetUserByEmail(createUserRequest.Email)
 	if err != nil {
@@ -22,7 +40,7 @@ func CreateUser(createUserRequest *dtos.CreateUserRequest) (*map[string]interfac
 	}
 
 	//Check username
-	existUsername, err := repositories.GetUserByUsernae(createUserRequest.Username)
+	existUsername, err := repositories.GetUserByUsername(createUserRequest.Username)
 	if err != nil {
 		return nil, err
 	}
@@ -56,16 +74,7 @@ func CreateUser(createUserRequest *dtos.CreateUserRequest) (*map[string]interfac
 		return nil, err
 	}
 
-	result := &map[string]interface{}{
-		"id":       user.ID,
-		"username": user.Username,
-		"email":    user.Email,
-		"role":     user.Role,
-		"fullname": profile.Fullname,
-		"bio":      profile.Bio,
-	}
-
-	return result, nil
+	return toUserResponse(user, profile), nil
 }
 
 func Login(loginRequest *dtos.LoginRequest) (string, error) {
@@ -88,4 +97,16 @@ func Login(loginRequest *dtos.LoginRequest) (string, error) {
 	}
 
 	return token, nil
+}
+
+func Delete(id int) (*models.User, error) {
+	existUser, err := repositories.GetUserById(id)
+	if err != nil {
+		return nil, err
+	}
+	if existUser == nil {
+		return nil, middleware.NewCustomError(http.StatusNotFound, "This user not found.")
+	}
+
+	return repositories.DeleteUserById(id)
 }

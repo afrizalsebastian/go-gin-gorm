@@ -1,10 +1,12 @@
 package dtos
 
 type UserResponse struct {
-	Username string `json:"username"`
-	Email    string `json:"email"`
-	ID       int    `json:"id"`
-	Role     string `json:"role"`
+	Username string  `json:"username"`
+	Email    string  `json:"email"`
+	ID       int     `json:"id"`
+	Role     string  `json:"role"`
+	Fullname *string `json:"fullname,omitempty"`
+	Bio      *string `json:"bio,omitempty"`
 }
 
 type CreateUserRequest struct {

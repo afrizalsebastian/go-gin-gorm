@@ -6,7 +6,15 @@ import (
 
 	"github.com/afrizalsebastian/go-gin-gorm/utils"
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v5"
 )
+
+type AppClaims struct {
+	ID       int    `json:"id"`
+	Username string `json:"username"`
+	Email    string `json:"email"`
+	Role     string `json:"role"`
+}
 
 func AuthenticationMiddleware(c *gin.Context) {
 	header := c.GetHeader("Authorization")
@@ -26,8 +34,14 @@ func AuthenticationMiddleware(c *gin.Context) {
 		return
 	}
 
-	claims := decodedToken.Claims
+	claims := decodedToken.Claims.(jwt.MapClaims)
+	appClaims := AppClaims{
+		ID:       int(claims["id"].(float64)),
+		Username: claims["username"].(string),
+		Email:    claims["email"].(string),
+		Role:     claims["role"].(string),
+	}
 
-	c.Set("user", claims)
+	c.Set("user", appClaims)
 	c.Next()
 }

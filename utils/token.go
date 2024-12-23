@@ -10,6 +10,7 @@ import (
 )
 
 type JwtClaims struct {
+	jwt.RegisteredClaims
 	ID       int    `json:"id"`
 	Username string `json:"username"`
 	Email    string `json:"email"`
@@ -35,6 +36,9 @@ func CreateToken(user *models.User) (string, error) {
 		"role":     user.Role,
 		"exp":      time.Now().Add(2 * time.Minute).Unix(),
 		"iat":      time.Now().Unix(),
+		"iss":      "localhost:8000",
+		"aud":      "localhost:8000",
+		"sub":      user.Username,
 	})
 
 	token, err := claims.SignedString(JWT_SECRET)
