@@ -17,5 +17,5 @@ type User struct {
 	Role      Role      `gorm:"type:enum('USER','ADMIN');default:'USER'" json:"role"`
 	CreatedAt time.Time `gorm:"autoCreateTime" json:"created_at"`
 	UpdatedAt time.Time `gorm:"autoUpdateTime" json:"updated_at"`
-	Profile   Profile   `gorm:"constraint:OnDelete:CASCADE;"`
+	Profile   Profile   `gorm:"constraint:OnDelete:CASCADE;foreignKey:UserId;references:ID"`
 }

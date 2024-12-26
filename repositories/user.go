@@ -58,10 +58,12 @@ func GetUserByUsername(username string) (*models.User, error) {
 
 func DeleteUserById(id int) (*models.User, error) {
 	var user models.User
-	result := config.DB.Delete(&user, id)
+	if err := config.DB.Preload("Profile").First(&user, id).Error; err != nil {
+		return nil, err
+	}
 
-	if result.Error != nil {
-		return nil, result.Error
+	if err := config.DB.Delete(&user).Error; err != nil {
+		return nil, err
 	}
 	return &user, nil
 }

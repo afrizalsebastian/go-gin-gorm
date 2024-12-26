@@ -9,6 +9,7 @@ import (
 	"github.com/afrizalsebastian/go-gin-gorm/repositories"
 	"github.com/afrizalsebastian/go-gin-gorm/utils"
 	"golang.org/x/crypto/bcrypt"
+	"gorm.io/gorm"
 )
 
 func toUserResponse(user *models.User, profile *models.Profile) *dtos.UserResponse {
@@ -99,14 +100,15 @@ func Login(loginRequest *dtos.LoginRequest) (string, error) {
 	return token, nil
 }
 
-func Delete(id int) (*models.User, error) {
-	existUser, err := repositories.GetUserById(id)
+func Delete(id int) (*dtos.UserResponse, error) {
+	deletedUser, err := repositories.DeleteUserById(id)
 	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, middleware.NewCustomError(http.StatusNotFound, "This user not found.")
+
+		}
 		return nil, err
 	}
-	if existUser == nil {
-		return nil, middleware.NewCustomError(http.StatusNotFound, "This user not found.")
-	}
 
-	return repositories.DeleteUserById(id)
+	return toUserResponse(deletedUser, &deletedUser.Profile), nil
 }

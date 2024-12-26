@@ -8,5 +8,5 @@ type Profile struct {
 	Bio       string    `gorm:"type:text" json:"bio"`
 	CreatedAt time.Time `gorm:"autoCreateTime" json:"created_at"`
 	UpdatedAt time.Time `gorm:"autoUpdateTime" json:"updated_at"`
-	UserId    uint
+	UserId    uint      `gorm:"not null;"`
 }
