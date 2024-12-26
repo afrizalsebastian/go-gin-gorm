@@ -1,4 +1,4 @@
-package controllers
+package user_controllers
 
 import (
 	"net/http"
@@ -9,7 +9,27 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func CreateUser(c *gin.Context) {
+func getClaims(c *gin.Context) (*middleware.AppClaims, error) {
+	claimsContext, exists := c.Get("user")
+	if !exists {
+		return nil, &middleware.CustomError{
+			StatusCode: http.StatusUnauthorized,
+			Message:    "403 Unathorized",
+		}
+	}
+
+	claims, ok := claimsContext.(middleware.AppClaims)
+	if !ok {
+		return nil, &middleware.CustomError{
+			StatusCode: http.StatusInternalServerError,
+			Message:    "Something went wrong",
+		}
+	}
+
+	return &claims, nil
+}
+
+func Create(c *gin.Context) {
 	var request dtos.CreateUserRequest
 
 	if err := c.ShouldBindBodyWithJSON(&request); err != nil {
@@ -21,7 +41,7 @@ func CreateUser(c *gin.Context) {
 		return
 	}
 
-	user, err := user_services.CreateUser(&request)
+	user, err := user_services.Create(&request)
 	if err != nil {
 		c.Error(err)
 		return
@@ -59,31 +79,35 @@ func Login(c *gin.Context) {
 	})
 }
 
-func DeleteUser(c *gin.Context) {
-	claims, exists := c.Get("user")
-	if !exists {
-		c.Error(&middleware.CustomError{
-			StatusCode: http.StatusUnauthorized,
-			Message:    "403 Unathorized",
-		})
-		return
-	}
-
-	userId, ok := claims.(middleware.AppClaims)
-	if !ok {
-		c.Error(&middleware.CustomError{
-			StatusCode: http.StatusInternalServerError,
-			Message:    "Something went wrong",
-		})
-		return
-	}
-
-	result, err := user_services.Delete(userId.ID)
+func Get(c *gin.Context) {
+	claims, err := getClaims(c)
 	if err != nil {
-		c.Error(&middleware.CustomError{
-			StatusCode: http.StatusInternalServerError,
-			Message:    err.Error(),
-		})
+		c.Error(err)
+		return
+	}
+
+	result, err := user_services.Get(claims.ID)
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status": true,
+		"data":   result,
+	})
+}
+
+func Delete(c *gin.Context) {
+	claims, err := getClaims(c)
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
+	result, err := user_services.Delete(claims.ID)
+	if err != nil {
+		c.Error(err)
 		return
 	}
 

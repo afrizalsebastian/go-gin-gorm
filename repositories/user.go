@@ -18,7 +18,7 @@ func CreateUser(user *models.User) error {
 
 func GetUserById(id int) (*models.User, error) {
 	var user models.User
-	result := config.DB.First(&user, id)
+	result := config.DB.Preload("Profile").First(&user, id)
 
 	if result.Error != nil {
 		if result.Error == gorm.ErrRecordNotFound {

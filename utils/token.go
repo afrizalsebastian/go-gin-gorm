@@ -34,7 +34,7 @@ func CreateToken(user *models.User) (string, error) {
 		"username": user.Username,
 		"email":    user.Email,
 		"role":     user.Role,
-		"exp":      time.Now().Add(2 * time.Minute).Unix(),
+		"exp":      time.Now().Add(6 * time.Hour).Unix(),
 		"iat":      time.Now().Unix(),
 		"iss":      "localhost:8000",
 		"aud":      "localhost:8000",

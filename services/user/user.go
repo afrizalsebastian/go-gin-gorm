@@ -30,7 +30,7 @@ func toUserResponse(user *models.User, profile *models.Profile) *dtos.UserRespon
 	}
 }
 
-func CreateUser(createUserRequest *dtos.CreateUserRequest) (*dtos.UserResponse, error) {
+func Create(createUserRequest *dtos.CreateUserRequest) (*dtos.UserResponse, error) {
 	//Check email
 	existEmail, err := repositories.GetUserByEmail(createUserRequest.Email)
 	if err != nil {
@@ -98,6 +98,18 @@ func Login(loginRequest *dtos.LoginRequest) (string, error) {
 	}
 
 	return token, nil
+}
+
+func Get(userId int) (*dtos.UserResponse, error) {
+	user, err := repositories.GetUserById(userId)
+	if err != nil {
+		return nil, err
+	}
+	if user == nil {
+		return nil, middleware.NewCustomError(http.StatusNotFound, "This user not found.")
+	}
+
+	return toUserResponse(user, &user.Profile), nil
 }
 
 func Delete(id int) (*dtos.UserResponse, error) {
