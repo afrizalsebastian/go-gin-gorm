@@ -112,6 +112,65 @@ func Get(userId int) (*dtos.UserResponse, error) {
 	return toUserResponse(user, &user.Profile), nil
 }
 
+func Update(userId int, updateRequest *dtos.UpdateUserRequest) (*dtos.UserResponse, error) {
+	// Check User
+	user, err := repositories.GetUserById(userId)
+	if err != nil {
+		return nil, err
+	}
+	if user == nil {
+		return nil, middleware.NewCustomError(http.StatusNotFound, "This user not found.")
+	}
+
+	// Check and upadte email
+	if updateRequest.Email != nil {
+		existEmail, err := repositories.GetUserByEmail(*updateRequest.Email)
+		if err != nil {
+			return nil, err
+		}
+		if existEmail != nil {
+			return nil, middleware.NewCustomError(http.StatusBadRequest, "Bad Request. Email already used")
+		}
+
+		user.Email = *updateRequest.Email
+	}
+
+	// Check and update username
+	if updateRequest.Username != nil {
+		existUsername, err := repositories.GetUserByUsername(*updateRequest.Username)
+		if err != nil {
+			return nil, err
+		}
+		if existUsername != nil {
+			return nil, middleware.NewCustomError(http.StatusBadRequest, "Bad Request. Username already taken")
+		}
+
+		user.Username = *updateRequest.Username
+	}
+
+	// Update fullname
+	if updateRequest.Fullname != nil {
+		user.Profile.Fullname = *updateRequest.Fullname
+	}
+
+	// update bio
+	if updateRequest.Bio != nil {
+		user.Profile.Bio = *updateRequest.Bio
+	}
+
+	// Save user
+	if err := repositories.UpdateUser(user); err != nil {
+		return nil, err
+	}
+
+	//Save Profile
+	if err := repositories.UpdateProfile(&user.Profile); err != nil {
+		return nil, err
+	}
+
+	return toUserResponse(user, &user.Profile), nil
+}
+
 func Delete(id int) (*dtos.UserResponse, error) {
 	deletedUser, err := repositories.DeleteUserById(id)
 	if err != nil {

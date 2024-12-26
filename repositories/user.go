@@ -56,6 +56,14 @@ func GetUserByUsername(username string) (*models.User, error) {
 	return &user, nil
 }
 
+func UpdateUser(user *models.User) error {
+	if err := config.DB.Save(user).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func DeleteUserById(id int) (*models.User, error) {
 	var user models.User
 	if err := config.DB.Preload("Profile").First(&user, id).Error; err != nil {

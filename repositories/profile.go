@@ -6,10 +6,16 @@ import (
 )
 
 func CreateProfile(profile *models.Profile) error {
-	result := config.DB.Create(profile)
+	if err := config.DB.Create(profile).Error; err != nil {
+		return err
+	}
 
-	if result.Error != nil {
-		return result.Error
+	return nil
+}
+
+func UpdateProfile(profile *models.Profile) error {
+	if err := config.DB.Save(profile).Error; err != nil {
+		return err
 	}
 
 	return nil

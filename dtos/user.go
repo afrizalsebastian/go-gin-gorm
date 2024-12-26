@@ -17,6 +17,13 @@ type CreateUserRequest struct {
 	Bio      string `json:"bio"`
 }
 
+type UpdateUserRequest struct {
+	Username *string `json:"username"`
+	Email    *string `json:"email"`
+	Fullname *string `json:"fullname"`
+	Bio      *string `json:"bio"`
+}
+
 type LoginRequest struct {
 	Email    string `json:"email" binding:"required"`
 	Password string `json:"password" binding:"required"`

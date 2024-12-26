@@ -98,6 +98,35 @@ func Get(c *gin.Context) {
 	})
 }
 
+func Update(c *gin.Context) {
+	claims, err := getClaims(c)
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
+	var request dtos.UpdateUserRequest
+	if err := c.ShouldBindBodyWithJSON(&request); err != nil {
+		err := &middleware.CustomError{
+			StatusCode: 400,
+			Message:    "Validation Error",
+		}
+		c.Error(err)
+		return
+	}
+
+	result, err := user_services.Update(claims.ID, &request)
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status": true,
+		"data":   result,
+	})
+}
+
 func Delete(c *gin.Context) {
 	claims, err := getClaims(c)
 	if err != nil {
