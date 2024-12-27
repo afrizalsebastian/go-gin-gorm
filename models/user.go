@@ -6,7 +6,7 @@ type Role string
 
 const (
 	AdminApp Role = "ADMIN"
-	UserApp  Role = "USER"
+	UserApp  Role = "US"
 )
 
 type User struct {
@@ -17,5 +17,7 @@ type User struct {
 	Role      Role      `gorm:"type:enum('USER','ADMIN');default:'USER'" json:"role"`
 	CreatedAt time.Time `gorm:"autoCreateTime" json:"created_at"`
 	UpdatedAt time.Time `gorm:"autoUpdateTime" json:"updated_at"`
-	Profile   Profile   `gorm:"constraint:OnDelete:CASCADE;foreignKey:UserId;references:ID"`
+
+	Profile Profile `gorm:"constraint:OnDelete:CASCADE;foreignKey:UserId;references:ID"`
+	Posts   []Post  `gorm:"foreignKey:UserId;references:ID;constraint:OnDelete:SET NULL"`
 }

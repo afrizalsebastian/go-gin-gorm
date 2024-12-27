@@ -1,13 +1,15 @@
 package models
 
-import "time"
+import (
+	"time"
+)
 
-type Profile struct {
+type Post struct {
 	ID        uint      `gorm:"primaryKey" json:"id"`
-	Fullname  string    `gorm:"type:varchar(250);not null" json:"fullname"`
-	Bio       string    `gorm:"type:text" json:"bio"`
+	Title     string    `gorm:"type:varchar(250);not null" json:"title"`
+	Content   string    `gorm:"type:text" json:"content"`
 	CreatedAt time.Time `gorm:"autoCreateTime" json:"created_at"`
 	UpdatedAt time.Time `gorm:"autoUpdateTime" json:"updated_at"`
 
-	UserId uint `gorm:"not null;"`
+	UserId *uint `gorm:""`
 }

@@ -25,8 +25,8 @@ func main() {
 
 	api := r.Group("/api")
 	{
-		routes.SetupExampleRoutes(api)
 		routes.SetupUserRoutes(api)
+		routes.SetupPostRoutes(api)
 	}
 
 	r.Run(":8000")

@@ -3,31 +3,12 @@ package user_controllers
 import (
 	"net/http"
 
+	"github.com/afrizalsebastian/go-gin-gorm/controllers"
 	"github.com/afrizalsebastian/go-gin-gorm/dtos"
 	"github.com/afrizalsebastian/go-gin-gorm/middleware"
 	user_services "github.com/afrizalsebastian/go-gin-gorm/services/user"
 	"github.com/gin-gonic/gin"
 )
-
-func getClaims(c *gin.Context) (*middleware.AppClaims, error) {
-	claimsContext, exists := c.Get("user")
-	if !exists {
-		return nil, &middleware.CustomError{
-			StatusCode: http.StatusUnauthorized,
-			Message:    "403 Unathorized",
-		}
-	}
-
-	claims, ok := claimsContext.(middleware.AppClaims)
-	if !ok {
-		return nil, &middleware.CustomError{
-			StatusCode: http.StatusInternalServerError,
-			Message:    "Something went wrong",
-		}
-	}
-
-	return &claims, nil
-}
 
 func Create(c *gin.Context) {
 	var request dtos.CreateUserRequest
@@ -80,7 +61,7 @@ func Login(c *gin.Context) {
 }
 
 func Get(c *gin.Context) {
-	claims, err := getClaims(c)
+	claims, err := controllers.GetClaims(c)
 	if err != nil {
 		c.Error(err)
 		return
@@ -99,7 +80,7 @@ func Get(c *gin.Context) {
 }
 
 func Update(c *gin.Context) {
-	claims, err := getClaims(c)
+	claims, err := controllers.GetClaims(c)
 	if err != nil {
 		c.Error(err)
 		return
@@ -128,7 +109,7 @@ func Update(c *gin.Context) {
 }
 
 func Delete(c *gin.Context) {
-	claims, err := getClaims(c)
+	claims, err := controllers.GetClaims(c)
 	if err != nil {
 		c.Error(err)
 		return

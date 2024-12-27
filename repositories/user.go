@@ -7,10 +7,8 @@ import (
 )
 
 func CreateUser(user *models.User) error {
-	result := config.DB.Create(user)
-
-	if result.Error != nil {
-		return result.Error
+	if err := config.DB.Create(user).Error; err != nil {
+		return err
 	}
 
 	return nil
