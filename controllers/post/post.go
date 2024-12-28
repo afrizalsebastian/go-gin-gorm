@@ -41,8 +41,36 @@ func Create(c *gin.Context) {
 }
 
 func GetById(c *gin.Context) {
-	_, err := controllers.GetClaims(c)
+	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
+		err := &middleware.CustomError{
+			StatusCode: 400,
+			Message:    "Path validation Error",
+		}
+		c.Error(err)
+		return
+	}
+
+	result, err := post_services.GetById(id)
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status": true,
+		"data":   result,
+	})
+}
+
+func Update(c *gin.Context) {
+	var request dtos.UpdatePostRequest
+
+	if err := c.ShouldBindBodyWithJSON(&request); err != nil {
+		err := &middleware.CustomError{
+			StatusCode: 400,
+			Message:    "Validation Error",
+		}
 		c.Error(err)
 		return
 	}
@@ -57,7 +85,7 @@ func GetById(c *gin.Context) {
 		return
 	}
 
-	result, err := post_services.GetById(id)
+	result, err := post_services.Update(id, &request)
 	if err != nil {
 		c.Error(err)
 		return

@@ -52,3 +52,27 @@ func GetById(postId int) (*dtos.PostResponse, error) {
 
 	return toPostRequest(post, post.User), nil
 }
+
+func Update(postId int, updateRequest *dtos.UpdatePostRequest) (*dtos.PostResponse, error) {
+	extPost, err := repositories.GetPostById(postId)
+	if err != nil {
+		return nil, err
+	}
+	if extPost == nil {
+		return nil, middleware.NewCustomError(http.StatusNotFound, "This user not found.")
+	}
+
+	if updateRequest.Content != nil {
+		extPost.Content = *updateRequest.Content
+	}
+
+	if updateRequest.Title != nil {
+		extPost.Title = *updateRequest.Title
+	}
+
+	if err := repositories.UpdatePost(extPost); err != nil {
+		return nil, err
+	}
+
+	return toPostRequest(extPost, extPost.User), nil
+}

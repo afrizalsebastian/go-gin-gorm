@@ -27,3 +27,7 @@ func GetPostById(postId int) (*models.Post, error) {
 
 	return &post, nil
 }
+
+func UpdatePost(post *models.Post) error {
+	return config.DB.Save(post).Error
+}

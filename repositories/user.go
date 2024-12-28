@@ -55,11 +55,7 @@ func GetUserByUsername(username string) (*models.User, error) {
 }
 
 func UpdateUser(user *models.User) error {
-	if err := config.DB.Save(user).Error; err != nil {
-		return err
-	}
-
-	return nil
+	return config.DB.Save(user).Error
 }
 
 func DeleteUserById(id int) (*models.User, error) {
