@@ -12,5 +12,6 @@ func SetupPostRoutes(router *gin.RouterGroup) {
 		postGroup.POST("/", middleware.AuthenticationMiddleware, post_controllers.Create)
 		postGroup.GET("/:id", middleware.AuthenticationMiddleware, post_controllers.GetById)
 		postGroup.PUT("/:id", middleware.AuthenticationMiddleware, post_controllers.Update)
+		postGroup.DELETE("/:id", middleware.AuthenticationMiddleware, post_controllers.Delete)
 	}
 }

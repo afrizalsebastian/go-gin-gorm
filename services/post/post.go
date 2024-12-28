@@ -25,7 +25,7 @@ func Create(userId int, postRequest *dtos.CreatePostRequest) (*dtos.PostResponse
 		return nil, err
 	}
 	if user == nil {
-		return nil, middleware.NewCustomError(http.StatusNotFound, "This user not found.")
+		return nil, middleware.NewCustomError(http.StatusNotFound, "This post not found.")
 	}
 
 	post := &models.Post{
@@ -47,7 +47,7 @@ func GetById(postId int) (*dtos.PostResponse, error) {
 		return nil, err
 	}
 	if post == nil {
-		return nil, middleware.NewCustomError(http.StatusNotFound, "This user not found.")
+		return nil, middleware.NewCustomError(http.StatusNotFound, "This post not found.")
 	}
 
 	return toPostRequest(post, post.User), nil
@@ -59,7 +59,7 @@ func Update(postId int, updateRequest *dtos.UpdatePostRequest) (*dtos.PostRespon
 		return nil, err
 	}
 	if extPost == nil {
-		return nil, middleware.NewCustomError(http.StatusNotFound, "This user not found.")
+		return nil, middleware.NewCustomError(http.StatusNotFound, "This post not found.")
 	}
 
 	if updateRequest.Content != nil {
@@ -75,4 +75,20 @@ func Update(postId int, updateRequest *dtos.UpdatePostRequest) (*dtos.PostRespon
 	}
 
 	return toPostRequest(extPost, extPost.User), nil
+}
+
+func Delete(postId int) (*dtos.PostResponse, error) {
+	post, err := repositories.GetPostById(postId)
+	if err != nil {
+		return nil, err
+	}
+	if post == nil {
+		return nil, middleware.NewCustomError(http.StatusNotFound, "This post not found.")
+	}
+
+	if err := repositories.DeletePost(post); err != nil {
+		return nil, err
+	}
+
+	return toPostRequest(post, post.User), nil
 }

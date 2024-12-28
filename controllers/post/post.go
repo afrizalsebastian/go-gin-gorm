@@ -96,3 +96,26 @@ func Update(c *gin.Context) {
 		"data":   result,
 	})
 }
+
+func Delete(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		err := &middleware.CustomError{
+			StatusCode: 400,
+			Message:    "Path validation Error",
+		}
+		c.Error(err)
+		return
+	}
+
+	result, err := post_services.Delete(id)
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status": true,
+		"data":   result,
+	})
+}

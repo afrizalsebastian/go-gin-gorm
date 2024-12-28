@@ -31,3 +31,7 @@ func GetPostById(postId int) (*models.Post, error) {
 func UpdatePost(post *models.Post) error {
 	return config.DB.Save(post).Error
 }
+
+func DeletePost(post *models.Post) error {
+	return config.DB.Delete(post).Error
+}
