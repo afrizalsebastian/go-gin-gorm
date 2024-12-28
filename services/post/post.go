@@ -9,7 +9,7 @@ import (
 	"github.com/afrizalsebastian/go-gin-gorm/repositories"
 )
 
-func toPostRequest(post *models.Post, user *models.User) *dtos.PostResponse {
+func toPostResponse(post *models.Post, user *models.User) *dtos.PostResponse {
 	return &dtos.PostResponse{
 		ID:       int(post.ID),
 		Title:    string(post.Title),
@@ -38,7 +38,37 @@ func Create(userId int, postRequest *dtos.CreatePostRequest) (*dtos.PostResponse
 		return nil, err
 	}
 
-	return toPostRequest(post, user), nil
+	return toPostResponse(post, user), nil
+}
+
+func Get(rows int, page int) (*dtos.ListPostResponse, error) {
+	offset := (page - 1) * rows
+
+	postsQuery, err := repositories.GetPost(rows, offset)
+	if err != nil {
+		return nil, err
+	}
+
+	posts := []*dtos.PostResponse{}
+	for _, post := range postsQuery {
+		response := toPostResponse(post, post.User)
+		posts = append(posts, response)
+	}
+
+	count, err := repositories.GetCountPost()
+	if err != nil {
+		return nil, err
+	}
+
+	totalPage := (*count + int64(rows) - 1) / int64(rows)
+
+	result := &dtos.ListPostResponse{
+		Posts:     posts,
+		Page:      page,
+		TotalPage: int(totalPage),
+	}
+
+	return result, nil
 }
 
 func GetById(postId int) (*dtos.PostResponse, error) {
@@ -50,7 +80,7 @@ func GetById(postId int) (*dtos.PostResponse, error) {
 		return nil, middleware.NewCustomError(http.StatusNotFound, "This post not found.")
 	}
 
-	return toPostRequest(post, post.User), nil
+	return toPostResponse(post, post.User), nil
 }
 
 func Update(postId int, updateRequest *dtos.UpdatePostRequest) (*dtos.PostResponse, error) {
@@ -74,7 +104,7 @@ func Update(postId int, updateRequest *dtos.UpdatePostRequest) (*dtos.PostRespon
 		return nil, err
 	}
 
-	return toPostRequest(extPost, extPost.User), nil
+	return toPostResponse(extPost, extPost.User), nil
 }
 
 func Delete(postId int) (*dtos.PostResponse, error) {
@@ -90,5 +120,5 @@ func Delete(postId int) (*dtos.PostResponse, error) {
 		return nil, err
 	}
 
-	return toPostRequest(post, post.User), nil
+	return toPostResponse(post, post.User), nil
 }

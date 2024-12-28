@@ -8,6 +8,12 @@ type PostResponse struct {
 	Username string `json:"username"`
 }
 
+type ListPostResponse struct {
+	Posts     []*PostResponse `json:"id"`
+	Page      int             `json:"page"`
+	TotalPage int             `json:"total_page"`
+}
+
 type CreatePostRequest struct {
 	Title   string `json:"title" binding:"required"`
 	Content string `json:"content" binding:"required"`

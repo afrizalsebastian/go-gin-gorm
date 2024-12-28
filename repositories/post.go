@@ -28,6 +28,24 @@ func GetPostById(postId int) (*models.Post, error) {
 	return &post, nil
 }
 
+func GetCountPost() (*int64, error) {
+	var count int64
+	if err := config.DB.Model(&models.Post{}).Count(&count).Error; err != nil {
+		return nil, err
+	}
+
+	return &count, nil
+}
+
+func GetPost(rows int, offset int) ([]*models.Post, error) {
+	var posts []*models.Post
+	if err := config.DB.Limit(rows).Offset(offset).Preload("User.Profile").Find(&posts).Error; err != nil {
+		return nil, err
+	}
+
+	return posts, nil
+}
+
 func UpdatePost(post *models.Post) error {
 	return config.DB.Save(post).Error
 }

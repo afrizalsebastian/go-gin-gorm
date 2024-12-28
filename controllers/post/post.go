@@ -40,6 +40,42 @@ func Create(c *gin.Context) {
 	})
 }
 
+func Get(c *gin.Context) {
+	rowsQuery := c.DefaultQuery("rows", "5")
+	pageQuery := c.DefaultQuery("page", "1")
+
+	rows, err := strconv.Atoi(rowsQuery)
+	if err != nil {
+		err := &middleware.CustomError{
+			StatusCode: 400,
+			Message:    "Rows validation Error",
+		}
+		c.Error(err)
+		return
+	}
+
+	page, err := strconv.Atoi(pageQuery)
+	if err != nil {
+		err := &middleware.CustomError{
+			StatusCode: 400,
+			Message:    "Rows validation Error",
+		}
+		c.Error(err)
+		return
+	}
+
+	result, err := post_services.Get(rows, page)
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status": true,
+		"data":   result,
+	})
+}
+
 func GetById(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
