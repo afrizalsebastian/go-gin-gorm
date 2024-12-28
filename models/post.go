@@ -12,4 +12,5 @@ type Post struct {
 	UpdatedAt time.Time `gorm:"autoUpdateTime" json:"updated_at"`
 
 	UserId *uint `gorm:""`
+	User   *User `gorm:"foreignKey:UserId;references:ID"`
 }

@@ -10,5 +10,6 @@ func SetupPostRoutes(router *gin.RouterGroup) {
 	postGroup := router.Group("/post")
 	{
 		postGroup.POST("/", middleware.AuthenticationMiddleware, post_controllers.Create)
+		postGroup.GET("/:id", middleware.AuthenticationMiddleware, post_controllers.GetById)
 	}
 }

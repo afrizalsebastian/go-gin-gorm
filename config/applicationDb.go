@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"log"
 	"os"
 
 	"github.com/afrizalsebastian/go-gin-gorm/models"
@@ -26,6 +27,8 @@ func ConnectDatabase() {
 		panic(err)
 	}
 
-	db.AutoMigrate(&models.User{}, &models.Post{}, &models.Profile{})
+	if err := db.AutoMigrate(&models.User{}, &models.Post{}, &models.Profile{}); err != nil {
+		log.Fatal(err)
+	}
 	DB = db
 }

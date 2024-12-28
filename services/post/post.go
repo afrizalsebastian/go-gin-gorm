@@ -40,3 +40,15 @@ func Create(userId int, postRequest *dtos.CreatePostRequest) (*dtos.PostResponse
 
 	return toPostRequest(post, user), nil
 }
+
+func GetById(postId int) (*dtos.PostResponse, error) {
+	post, err := repositories.GetPostById(postId)
+	if err != nil {
+		return nil, err
+	}
+	if post == nil {
+		return nil, middleware.NewCustomError(http.StatusNotFound, "This user not found.")
+	}
+
+	return toPostRequest(post, post.User), nil
+}

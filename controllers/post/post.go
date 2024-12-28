@@ -2,6 +2,7 @@ package post_controllers
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/afrizalsebastian/go-gin-gorm/controllers"
 	"github.com/afrizalsebastian/go-gin-gorm/dtos"
@@ -33,6 +34,35 @@ func Create(c *gin.Context) {
 		c.Error(err)
 		return
 	}
+	c.JSON(http.StatusOK, gin.H{
+		"status": true,
+		"data":   result,
+	})
+}
+
+func GetById(c *gin.Context) {
+	_, err := controllers.GetClaims(c)
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		err := &middleware.CustomError{
+			StatusCode: 400,
+			Message:    "Path validation Error",
+		}
+		c.Error(err)
+		return
+	}
+
+	result, err := post_services.GetById(id)
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"status": true,
 		"data":   result,
