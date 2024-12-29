@@ -1,11 +1,11 @@
 package dtos
 
 type PostResponse struct {
-	ID       int    `json:"id"`
-	Title    string `json:"title"`
-	Content  string `json:"content"`
-	Fullname string `json:"fullname"`
-	Username string `json:"username"`
+	ID       int     `json:"id"`
+	Title    string  `json:"title"`
+	Content  string  `json:"content"`
+	Fullname *string `json:"fullname"`
+	Username *string `json:"username"`
 }
 
 type ListPostResponse struct {

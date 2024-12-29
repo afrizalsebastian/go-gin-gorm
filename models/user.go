@@ -18,6 +18,7 @@ type User struct {
 	CreatedAt time.Time `gorm:"autoCreateTime" json:"created_at"`
 	UpdatedAt time.Time `gorm:"autoUpdateTime" json:"updated_at"`
 
-	Profile Profile `gorm:"constraint:OnDelete:CASCADE;foreignKey:UserId;references:ID"`
-	Posts   []Post  `gorm:"foreignKey:UserId;references:ID;constraint:OnDelete:SET NULL"`
+	Profile  Profile   `gorm:"constraint:OnDelete:CASCADE;foreignKey:UserId;references:ID"`
+	Posts    []Post    `gorm:"foreignKey:UserId;references:ID;constraint:OnDelete:SET NULL"`
+	Comments []Comment `gorm:"foreignKey:UserId;references:ID;constraint:OnDelete:SET NULL"`
 }

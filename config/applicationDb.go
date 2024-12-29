@@ -27,7 +27,7 @@ func ConnectDatabase() {
 		panic(err)
 	}
 
-	if err := db.AutoMigrate(&models.User{}, &models.Post{}, &models.Profile{}); err != nil {
+	if err := db.AutoMigrate(&models.User{}, &models.Post{}, &models.Profile{}, &models.Comment{}); err != nil {
 		log.Fatal(err)
 	}
 	DB = db

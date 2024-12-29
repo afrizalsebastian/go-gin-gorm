@@ -10,12 +10,19 @@ import (
 )
 
 func toPostResponse(post *models.Post, user *models.User) *dtos.PostResponse {
+	var username *string
+	var fullname *string
+	if user != nil {
+		username = &user.Username
+		fullname = &user.Profile.Fullname
+	}
+
 	return &dtos.PostResponse{
 		ID:       int(post.ID),
 		Title:    string(post.Title),
 		Content:  string(post.Content),
-		Username: user.Username,
-		Fullname: user.Profile.Fullname,
+		Username: username,
+		Fullname: fullname,
 	}
 }
 
