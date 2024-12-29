@@ -20,6 +20,9 @@ func ConnectDatabase() {
 	db_name := os.Getenv("NAME_DB")
 
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true", db_user, db_password, db_url, db_port, db_name)
+	fmt.Println("=================")
+	fmt.Println(dsn)
+	fmt.Println("=================")
 
 	db, err := gorm.Open(mysql.Open(dsn))
 

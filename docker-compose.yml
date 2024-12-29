@@ -1,0 +1,28 @@
+services:
+  mysql:
+    image: mysql
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+    container_name: mysql
+    networks:
+      - go-app
+
+  app:
+    build: .
+    restart: on-failure
+    container_name: go_gin_app
+    ports:
+      - 8000:8000
+    depends_on:
+      - mysql
+    env_file:
+      - .env
+    networks:
+      - go-app
+
+networks:
+  go-app:
+    driver: bridge
