@@ -93,7 +93,7 @@ func Update(claims *middleware.AppClaims, postId int, updateRequest *dtos.Update
 		ID:     uint(postId),
 		UserId: &userId,
 	}
-	if err := repositories.GetPostById(extPost); err != nil {
+	if err := repositories.GetPostByIdAndUserId(extPost); err != nil {
 		return nil, err
 	}
 
@@ -118,7 +118,7 @@ func Delete(claims *middleware.AppClaims, postId int) (*dtos.PostResponse, error
 		ID:     uint(postId),
 		UserId: &userId,
 	}
-	if err := repositories.GetPostById(post); err != nil {
+	if err := repositories.GetPostByIdAndUserId(post); err != nil {
 		return nil, err
 	}
 

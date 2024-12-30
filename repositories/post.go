@@ -26,6 +26,19 @@ func GetPostById(post *models.Post) error {
 	return nil
 }
 
+func GetPostByIdAndUserId(post *models.Post) error {
+	result := config.DB.Preload("User.Profile").Where("id = ? AND user_id = ?", post.ID, post.UserId).First(&post)
+
+	if result.Error != nil {
+		if result.Error == gorm.ErrRecordNotFound {
+			return middleware.NewCustomError(http.StatusNotFound, "Post not found")
+		}
+		return result.Error
+	}
+
+	return nil
+}
+
 func GetCountPost(count *int64) error {
 	return config.DB.Model(&models.Post{}).Count(count).Error
 }
