@@ -9,7 +9,7 @@ type PostResponse struct {
 }
 
 type ListPostResponse struct {
-	Posts     []*PostResponse `json:"id"`
+	Posts     []*PostResponse `json:"posts"`
 	Page      int             `json:"page"`
 	TotalPage int             `json:"total_page"`
 }

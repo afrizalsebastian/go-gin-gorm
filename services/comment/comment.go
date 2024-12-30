@@ -1,8 +1,6 @@
 package comment_services
 
 import (
-	"net/http"
-
 	"github.com/afrizalsebastian/go-gin-gorm/dtos"
 	"github.com/afrizalsebastian/go-gin-gorm/middleware"
 	"github.com/afrizalsebastian/go-gin-gorm/models"
@@ -19,12 +17,9 @@ func toCommentResponse(username string, comment *models.Comment, post *models.Po
 }
 
 func Create(claims *middleware.AppClaims, postId int, commentRequest *dtos.CreateCommentRequest) (*dtos.CommentResponse, error) {
-	post, err := repositories.GetPostById(postId)
-	if err != nil {
+	var post = &models.Post{ID: uint(postId)}
+	if err := repositories.GetPostById(post); err != nil {
 		return nil, err
-	}
-	if post == nil {
-		return nil, middleware.NewCustomError(http.StatusNotFound, "Post Not Found")
 	}
 
 	userId := uint(claims.ID)

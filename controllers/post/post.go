@@ -100,8 +100,13 @@ func GetById(c *gin.Context) {
 }
 
 func Update(c *gin.Context) {
-	var request dtos.UpdatePostRequest
+	claims, err := controllers.GetClaims(c)
+	if err != nil {
+		c.Error(err)
+		return
+	}
 
+	var request dtos.UpdatePostRequest
 	if err := c.ShouldBindBodyWithJSON(&request); err != nil {
 		err := &middleware.CustomError{
 			StatusCode: 400,
@@ -121,7 +126,7 @@ func Update(c *gin.Context) {
 		return
 	}
 
-	result, err := post_services.Update(id, &request)
+	result, err := post_services.Update(claims, id, &request)
 	if err != nil {
 		c.Error(err)
 		return
@@ -134,6 +139,12 @@ func Update(c *gin.Context) {
 }
 
 func Delete(c *gin.Context) {
+	claims, err := controllers.GetClaims(c)
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		err := &middleware.CustomError{
@@ -144,7 +155,7 @@ func Delete(c *gin.Context) {
 		return
 	}
 
-	result, err := post_services.Delete(id)
+	result, err := post_services.Delete(claims, id)
 	if err != nil {
 		c.Error(err)
 		return

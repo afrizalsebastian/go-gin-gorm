@@ -62,12 +62,12 @@ func Get(rows int, page int) (*dtos.ListPostResponse, error) {
 		posts = append(posts, response)
 	}
 
-	count, err := repositories.GetCountPost()
-	if err != nil {
+	var count int64
+	if err := repositories.GetCountPost(&count); err != nil {
 		return nil, err
 	}
 
-	totalPage := (*count + int64(rows) - 1) / int64(rows)
+	totalPage := (count + int64(rows) - 1) / int64(rows)
 
 	result := &dtos.ListPostResponse{
 		Posts:     posts,
@@ -79,24 +79,22 @@ func Get(rows int, page int) (*dtos.ListPostResponse, error) {
 }
 
 func GetById(postId int) (*dtos.PostResponse, error) {
-	post, err := repositories.GetPostById(postId)
-	if err != nil {
+	var post = &models.Post{ID: uint(postId)}
+	if err := repositories.GetPostById(post); err != nil {
 		return nil, err
-	}
-	if post == nil {
-		return nil, middleware.NewCustomError(http.StatusNotFound, "This post not found.")
 	}
 
 	return toPostResponse(post, post.User), nil
 }
 
-func Update(postId int, updateRequest *dtos.UpdatePostRequest) (*dtos.PostResponse, error) {
-	extPost, err := repositories.GetPostById(postId)
-	if err != nil {
-		return nil, err
+func Update(claims *middleware.AppClaims, postId int, updateRequest *dtos.UpdatePostRequest) (*dtos.PostResponse, error) {
+	userId := uint(claims.ID)
+	var extPost = &models.Post{
+		ID:     uint(postId),
+		UserId: &userId,
 	}
-	if extPost == nil {
-		return nil, middleware.NewCustomError(http.StatusNotFound, "This post not found.")
+	if err := repositories.GetPostById(extPost); err != nil {
+		return nil, err
 	}
 
 	if updateRequest.Content != nil {
@@ -114,13 +112,14 @@ func Update(postId int, updateRequest *dtos.UpdatePostRequest) (*dtos.PostRespon
 	return toPostResponse(extPost, extPost.User), nil
 }
 
-func Delete(postId int) (*dtos.PostResponse, error) {
-	post, err := repositories.GetPostById(postId)
-	if err != nil {
-		return nil, err
+func Delete(claims *middleware.AppClaims, postId int) (*dtos.PostResponse, error) {
+	userId := uint(claims.ID)
+	var post = &models.Post{
+		ID:     uint(postId),
+		UserId: &userId,
 	}
-	if post == nil {
-		return nil, middleware.NewCustomError(http.StatusNotFound, "This post not found.")
+	if err := repositories.GetPostById(post); err != nil {
+		return nil, err
 	}
 
 	if err := repositories.DeletePost(post); err != nil {
