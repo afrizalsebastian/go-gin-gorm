@@ -6,11 +6,7 @@ import (
 )
 
 func CreateProfile(profile *models.Profile) error {
-	if err := config.DB.Create(profile).Error; err != nil {
-		return err
-	}
-
-	return nil
+	return config.DB.Create(profile).Error
 }
 
 func UpdateProfile(profile *models.Profile) error {

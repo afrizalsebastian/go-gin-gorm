@@ -27,6 +27,7 @@ func main() {
 	{
 		routes.SetupUserRoutes(api)
 		routes.SetupPostRoutes(api)
+		routes.SetupCommentRoutes(api)
 	}
 
 	r.Run(":8000")

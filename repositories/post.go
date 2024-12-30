@@ -7,11 +7,7 @@ import (
 )
 
 func CreatePost(post *models.Post) error {
-	if err := config.DB.Create(post).Error; err != nil {
-		return err
-	}
-
-	return nil
+	return config.DB.Create(post).Error
 }
 
 func GetPostById(postId int) (*models.Post, error) {
