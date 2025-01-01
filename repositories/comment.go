@@ -14,7 +14,11 @@ func CreateComment(comment *models.Comment) error {
 }
 
 func GetCommentById(comment *models.Comment) error {
-	if err := config.DB.Preload("User").Where("id = ? AND post_id = ?", comment.ID, comment.PostId).First(&comment).Error; err != nil {
+	query := map[string]interface{}{
+		"id":      comment.ID,
+		"post_id": comment.PostId,
+	}
+	if err := config.DB.Preload("User").Where(query).First(&comment).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return middleware.NewCustomError(http.StatusNotFound, "Comment not found")
 		}
@@ -22,4 +26,24 @@ func GetCommentById(comment *models.Comment) error {
 	}
 
 	return nil
+}
+
+func GetCommentByIdAndUserId(comment *models.Comment) error {
+	query := map[string]interface{}{
+		"id":      comment.ID,
+		"post_id": comment.PostId,
+		"user_id": comment.UserId,
+	}
+	if err := config.DB.Preload("User").Where(query).First(&comment).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return middleware.NewCustomError(http.StatusNotFound, "Comment not found")
+		}
+		return err
+	}
+
+	return nil
+}
+
+func UpdateComment(comment *models.Comment) error {
+	return config.DB.Save(&comment).Error
 }

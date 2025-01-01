@@ -10,7 +10,7 @@ func CreateProfile(profile *models.Profile) error {
 }
 
 func UpdateProfile(profile *models.Profile) error {
-	if err := config.DB.Save(profile).Error; err != nil {
+	if err := config.DB.Save(&profile).Error; err != nil {
 		return err
 	}
 

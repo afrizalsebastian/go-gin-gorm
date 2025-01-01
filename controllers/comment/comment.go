@@ -83,3 +83,52 @@ func GetById(c *gin.Context) {
 		"data":   result,
 	})
 }
+
+func Update(c *gin.Context) {
+	claims, err := controllers.GetClaims(c)
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
+	postId, err := strconv.Atoi(c.Param("postId"))
+	if err != nil {
+		err := &middleware.CustomError{
+			StatusCode: 400,
+			Message:    "Path validation Error",
+		}
+		c.Error(err)
+		return
+	}
+
+	commentId, err := strconv.Atoi(c.Param("commentId"))
+	if err != nil {
+		err := &middleware.CustomError{
+			StatusCode: 400,
+			Message:    "Path validation Error",
+		}
+		c.Error(err)
+		return
+	}
+
+	var request dtos.UpdateCommentRequest
+	if err := c.ShouldBindBodyWithJSON(&request); err != nil {
+		err := &middleware.CustomError{
+			StatusCode: 400,
+			Message:    "Validation Error",
+		}
+		c.Error(err)
+		return
+	}
+
+	result, err := comment_services.Update(claims, postId, commentId, &request)
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
+	c.JSON(http.StatusCreated, gin.H{
+		"status": true,
+		"data":   result,
+	})
+}

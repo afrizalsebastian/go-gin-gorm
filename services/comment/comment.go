@@ -53,3 +53,33 @@ func GetById(postId int, commentId int) (*dtos.CommentResponse, error) {
 
 	return toCommentResponse(comment.User.Username, comment, post), nil
 }
+
+func Update(
+	claims *middleware.AppClaims,
+	postId int,
+	commentId int,
+	updateRequest *dtos.UpdateCommentRequest,
+) (*dtos.CommentResponse, error) {
+	var post = &models.Post{ID: uint(postId)}
+	if err := repositories.GetPostById(post); err != nil {
+		return nil, err
+	}
+
+	userId := uint(claims.ID)
+	var comment = &models.Comment{
+		ID:     uint(commentId),
+		PostId: &post.ID,
+		UserId: &userId,
+	}
+
+	if err := repositories.GetCommentByIdAndUserId(comment); err != nil {
+		return nil, err
+	}
+
+	comment.Content = updateRequest.Content
+	if err := repositories.UpdateComment(comment); err != nil {
+		return nil, err
+	}
+
+	return toCommentResponse(comment.User.Username, comment, post), nil
+}

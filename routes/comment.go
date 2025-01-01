@@ -11,5 +11,6 @@ func SetupCommentRoutes(router *gin.RouterGroup) {
 	{
 		postGroup.POST("/", middleware.AuthenticationMiddleware, comment_controllers.Create)
 		postGroup.GET("/:commentId", middleware.AuthenticationMiddleware, comment_controllers.GetById)
+		postGroup.PUT("/:commentId", middleware.AuthenticationMiddleware, comment_controllers.Update)
 	}
 }
