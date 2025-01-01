@@ -47,3 +47,7 @@ func GetCommentByIdAndUserId(comment *models.Comment) error {
 func UpdateComment(comment *models.Comment) error {
 	return config.DB.Save(&comment).Error
 }
+
+func DeleteComment(comment *models.Comment) error {
+	return config.DB.Delete(&comment).Error
+}

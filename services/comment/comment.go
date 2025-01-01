@@ -83,3 +83,31 @@ func Update(
 
 	return toCommentResponse(comment.User.Username, comment, post), nil
 }
+
+func Delete(
+	claims *middleware.AppClaims,
+	postId int,
+	commentId int,
+) (*dtos.CommentResponse, error) {
+	var post = &models.Post{ID: uint(postId)}
+	if err := repositories.GetPostById(post); err != nil {
+		return nil, err
+	}
+
+	userId := uint(claims.ID)
+	var comment = &models.Comment{
+		ID:     uint(commentId),
+		PostId: &post.ID,
+		UserId: &userId,
+	}
+
+	if err := repositories.GetCommentByIdAndUserId(comment); err != nil {
+		return nil, err
+	}
+
+	if err := repositories.DeleteComment(comment); err != nil {
+		return nil, err
+	}
+
+	return toCommentResponse(comment.User.Username, comment, post), nil
+}

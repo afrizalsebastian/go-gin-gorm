@@ -132,3 +132,42 @@ func Update(c *gin.Context) {
 		"data":   result,
 	})
 }
+
+func Delete(c *gin.Context) {
+	claims, err := controllers.GetClaims(c)
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
+	postId, err := strconv.Atoi(c.Param("postId"))
+	if err != nil {
+		err := &middleware.CustomError{
+			StatusCode: 400,
+			Message:    "Path validation Error",
+		}
+		c.Error(err)
+		return
+	}
+
+	commentId, err := strconv.Atoi(c.Param("commentId"))
+	if err != nil {
+		err := &middleware.CustomError{
+			StatusCode: 400,
+			Message:    "Path validation Error",
+		}
+		c.Error(err)
+		return
+	}
+
+	result, err := comment_services.Delete(claims, postId, commentId)
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
+	c.JSON(http.StatusCreated, gin.H{
+		"status": true,
+		"data":   result,
+	})
+}
