@@ -77,7 +77,7 @@ func Get(c *gin.Context) {
 }
 
 func GetById(c *gin.Context) {
-	id, err := strconv.Atoi(c.Param("id"))
+	id, err := strconv.Atoi(c.Param("postId"))
 	if err != nil {
 		err := &middleware.CustomError{
 			StatusCode: 400,
@@ -116,7 +116,7 @@ func Update(c *gin.Context) {
 		return
 	}
 
-	id, err := strconv.Atoi(c.Param("id"))
+	id, err := strconv.Atoi(c.Param("postId"))
 	if err != nil {
 		err := &middleware.CustomError{
 			StatusCode: 400,
@@ -145,7 +145,7 @@ func Delete(c *gin.Context) {
 		return
 	}
 
-	id, err := strconv.Atoi(c.Param("id"))
+	id, err := strconv.Atoi(c.Param("postId"))
 	if err != nil {
 		err := &middleware.CustomError{
 			StatusCode: 400,

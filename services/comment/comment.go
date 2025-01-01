@@ -35,3 +35,21 @@ func Create(claims *middleware.AppClaims, postId int, commentRequest *dtos.Creat
 
 	return toCommentResponse(claims.Username, comment, post), nil
 }
+
+func GetById(postId int, commentId int) (*dtos.CommentResponse, error) {
+	var post = &models.Post{ID: uint(postId)}
+	if err := repositories.GetPostById(post); err != nil {
+		return nil, err
+	}
+
+	var comment = &models.Comment{
+		ID:     uint(commentId),
+		PostId: &post.ID,
+	}
+
+	if err := repositories.GetCommentById(comment); err != nil {
+		return nil, err
+	}
+
+	return toCommentResponse(comment.User.Username, comment, post), nil
+}
